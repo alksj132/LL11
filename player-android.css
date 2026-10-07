@@ -1,0 +1,171 @@
+}
+/* Android PlayerScreen port: episode buttons, screen lock and the in-player settings menu. */
+.player-top { grid-template-columns: 48px 1fr auto 48px; }
+/* In a window the Windows caption buttons cover the top-right corner. */
+.immersive-player.windowed .player-top { padding-right: 158px; }
+.player-heading { min-width: 0; }
+.player-heading h1, .player-heading p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.player-center { gap: 18px; }
+.player-episode {
+  display: grid; place-items: center; width: 50px; height: 50px;
+  border: 1px solid #ffffff1f; border-radius: 50%;
+  background: #00000075; color: #fff; cursor: pointer;
+}
+.player-episode svg { width: 23px; height: 23px; fill: currentColor; stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; }
+.player-episode:hover:not(:disabled) { background: #ffffff1c; }
+.player-episode:disabled { background: #00000042; border-color: #ffffff0f; color: #ffffff47; cursor: default; }
+
+.player-bottom { right: 96px; }
+.player-lock, .player-unlock {
+  position: absolute; z-index: 3; display: grid; place-items: center;
+  border: 1px solid #ffffff24; border-radius: 50%;
+  background: #0000009e; color: #fff; cursor: pointer;
+}
+.player-lock { right: 18px; bottom: 16px; width: 50px; height: 50px; opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+.controls-visible .player-lock { opacity: 1; pointer-events: auto; }
+.player-lock svg, .player-unlock svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2; }
+.player-unlock { width: 72px; height: 72px; }
+.player-unlock svg { width: 28px; height: 28px; }
+.player-unlock.hidden { display: none; }
+.player-lock:hover, .player-unlock:hover { background: #262626; }
+
+/* Locked: only the unlock affordance (and the OP/ED pill) remain. */
+.immersive-player.locked :is(.player-shade, .player-top, .player-center, .player-bottom, .player-lock) { opacity: 0 !important; pointer-events: none !important; }
+.immersive-player.locked { cursor: default; }
+/* The cursor shows while the mouse moves (see player.js), without the controls. */
+.immersive-player.cursor-visible { cursor: default; }
+
+.player-settings {
+  position: absolute; z-index: 5; top: 72px; right: 16px;
+  display: flex; flex-direction: column;
+  width: min(380px, calc(100vw - 32px)); max-height: calc(100% - 96px);
+  border: 1px solid #ffffff1a; border-radius: 22px;
+  background: #111116f7; box-shadow: 0 24px 70px #000b;
+  opacity: 0; pointer-events: none; transform: translateY(-6px);
+  transition: opacity .18s ease, transform .18s ease;
+}
+.player-settings.open { opacity: 1; pointer-events: auto; transform: none; }
+.immersive-player.windowed .player-settings { right: 150px; }
+.ps-head { display: flex; align-items: center; gap: 10px; padding: 12px 10px 12px 16px; border-bottom: 1px solid #ffffff1a; }
+.ps-head > div { flex: 1; display: grid; }
+.ps-head b { font-size: 15px; }
+.ps-head small { color: #ffffff80; font-size: 11px; }
+.ps-badge { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: #ffffff1a; }
+.ps-badge svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 2; }
+.ps-body { overflow-y: auto; padding: 6px 0 12px; }
+.ps-section { margin: 4px 0; padding: 10px 18px; border-top: 1px solid #ffffff12; border-bottom: 1px solid #ffffff12; }
+.ps-section.hidden { display: none; }
+.ps-body > .ps-switch, .ps-body > .ps-row, .ps-body > .ps-note { margin-inline: 18px; }
+.ps-switch { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 0; cursor: pointer; }
+.ps-switch > span { display: grid; gap: 2px; min-width: 0; }
+.ps-switch b { font-size: 13px; font-weight: 600; }
+.ps-switch small, .ps-row small { color: #ffffff8c; font-size: 11px; }
+.ps-small b { font-size: 12px; }
+.ps-small small { font-size: 10px; }
+.ps-switch input {
+  appearance: none; flex: 0 0 auto; position: relative; width: 44px; height: 26px; margin: 0;
+  border-radius: 13px; background: #ffffff2e; cursor: pointer; transition: background .15s ease;
+}
+.ps-switch input::after {
+  content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
+  border-radius: 50%; background: #fff; transition: transform .15s ease;
+}
+.ps-switch input:checked { background: #c8a2c8; }
+.ps-switch input:checked::after { transform: translateX(18px); }
+.ps-state { margin: 2px 0 6px; color: #ffffffa8; font-size: 12px; }
+.ps-label { margin: 10px 0 4px; color: #ffffffb8; font-size: 11px; }
+.ps-group { margin: 16px 0 2px; font-size: 12px; font-weight: 600; }
+.ps-note { display: block; color: #ffffff80; font-size: 10px; }
+.ps-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.ps-chips button {
+  border: 0; border-radius: 8px; padding: 6px 8px;
+  background: #ffffff1a; color: #fff; font-size: 11px; cursor: pointer;
+}
+.ps-chips button:hover { background: #ffffff2e; }
+.ps-chips button.selected { background: #fff; color: #000; }
+.ps-body input[type=range] { width: 100%; accent-color: #c8a2c8; }
+.ps-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 0; }
+.ps-row > span { display: grid; gap: 2px; }
+.ps-row b { font-size: 13px; font-weight: 500; }
+.ps-row > button { border: 0; border-radius: 8px; padding: 6px 10px; background: transparent; color: #fff; font-size: 12px; cursor: pointer; }
+.ps-row > button:hover { background: #ffffff1a; }
+.ps-speed { flex-wrap: wrap; }
+.ps-section .sheet-button { margin-top: 10px; }
+
+.player-episode:focus-visible, .player-lock:focus-visible, .player-unlock:focus-visible,
+.ps-chips button:focus-visible, .ps-row > button:focus-visible, .ps-switch input:focus-visible {
+  outline: 3px solid #c8a2c8; outline-offset: 2px;
+}
+
+@media (max-width: 700px) {
+  .player-center { gap: 10px; }
+  .player-episode { width: 42px; height: 42px; }
+  .player-bottom { right: 80px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .player-settings, .player-lock, .ps-switch input, .ps-switch input::after { transition: none; }
+}
+
+/* Korean subtitle offer (the stream's own subtitle is another language). */
+.subtitle-offer {
+  position: absolute; z-index: 4; top: 84px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 8px; max-width: calc(100% - 32px);
+  border: 1px solid #ffffff2e; border-radius: 15px; padding: 8px 8px 8px 16px;
+  background: #000000d9; color: #fff; font-size: 13px;
+}
+.subtitle-offer.hidden { display: none; }
+.subtitle-offer button { border: 0; border-radius: 10px; padding: 7px 12px; background: #ffffff1f; color: #fff; font: inherit; cursor: pointer; }
+.subtitle-offer #subtitleOfferApply { background: #c8a2c8; color: #1c1b1f; font-weight: 700; }
+.subtitle-offer button:hover { filter: brightness(1.1); }
+
+/* Video + ASS canvas wrapper. */
+.video-stage { position: absolute; inset: 0; }
+
+/* Picture-in-picture source: composed frames with subtitles; it only has to exist in the page. */
+.pip-source { position: fixed; left: 0; top: 0; width: 2px; height: 2px; opacity: 0; pointer-events: none; }
+#miniPlayer.active { color: var(--lilac, #c8a2c8); }
+
+/* 재생 / 자막 / 자막 모양 tabs */
+.ps-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin: 10px 14px 2px; padding: 4px; border-radius: 12px; background: #ffffff12; }
+.ps-tabs button { height: 32px; border: 0; border-radius: 9px; background: transparent; color: #ffffffb3; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.ps-tabs button:hover { color: #fff; }
+.ps-tabs button.selected { background: #fff; color: #000; }
+.ps-pane { padding: 4px 18px 0; }
+.ps-pane.hidden { display: none; }
+.ps-pane > .ps-group:first-child { margin-top: 6px; }
+.ps-pane .ps-section { margin: 0 0 6px; padding: 6px 0 10px; border: 0; border-bottom: 1px solid #ffffff12; }
+.ps-body .sheet-button { min-height: 38px; margin-top: 0; padding: 8px 12px; border-radius: 10px; font: inherit; font-size: 13px; text-align: center; }
+.ps-body .sheet-tracks > .sheet-button, .ps-body .sheet-tracks > .sheet-button-row { margin-top: 10px; }
+.ps-pane > .sheet-button-row { margin-top: 8px; }
+.ps-pane > .sheet-button-row + .ps-note { margin-top: 6px; }
+.ps-body .track-list { max-height: 260px; }
+.ps-body .track-option { font: inherit; font-size: 13px; }
+.ps-body .track-option > span { display: grid; gap: 1px; min-width: 0; }
+.ps-body .track-option b { font-weight: 600; }
+.ps-body .track-option em { overflow: hidden; color: #ffffff80; font-size: 11px; font-style: normal; text-overflow: ellipsis; white-space: nowrap; }
+
+/* 영상 서버: kinds, then the servers of the open kind */
+.ps-server-list { display: grid; gap: 8px; margin-top: 8px; }
+.ps-server-kinds button.open { background: #c8a2c833; color: #fff; box-shadow: inset 0 0 0 1px #c8a2c8; }
+.ps-server-group { padding: 8px; border-radius: 10px; background: #ffffff0a; }
+.ps-server-group button.playing::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 6px; border-radius: 50%; background: #c8a2c8; vertical-align: middle; }
+.ps-server-list .ps-note { margin-top: -2px; }
+
+/* Plain-language help: what each source is, what a box holds, when to use a control. */
+.ps-pane > .ps-note { margin: 2px 0 6px; line-height: 1.45; }
+.ps-pane > .ps-note.ps-after-chips { margin-top: 6px; }
+.ps-section .ps-note { line-height: 1.45; }
+.ps-section .ps-note.ps-playing { margin-top: 4px; color: #ffffffa8; }
+.ps-box-note { margin: 4px 0 8px; line-height: 1.45; }
+.ps-body .sheet-tracks > .sheet-button-row + .track-list { margin-top: 10px; }
+.ps-sources { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; }
+.ps-sources button { display: grid; gap: 2px; padding: 7px 10px; text-align: left; }
+.ps-sources button b { font-size: 12px; font-weight: 600; }
+.ps-sources button small { color: #ffffff8c; font-size: 10px; }
+.ps-sources button.selected small { color: #0000008c; }
+.ps-sources button.hidden { display: none; }
+
+/* Keyboard shortcuts listed under the 재생 tab. */
+.ps-shortcuts { margin: 14px 0 4px; color: #ffffff8c; font-size: 11px; line-height: 1.7; }
+.ps-shortcuts b { color: #ffffffcc; font-weight: 600; margin-right: 6px; 

@@ -1,0 +1,43 @@
+}
+/* Windows title-bar buttons occupy the top-right 138px in an overlay window. */
+.topbar {
+  padding-right: 158px;
+}
+
+@media (max-width: 760px) {
+  .topbar {
+    padding-right: 148px;
+  }
+}
+
+/* The top bar is sticky inside the scrolling <main>, where Electron drops its drag region.
+   A fixed strip outside the scroller keeps the window draggable; the search box stays no-drag. */
+.window-drag {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 54px;
+  z-index: 0;
+  -webkit-app-region: drag;
+}
+
+/* Full-window layers drawn over the strip must stay clickable. */
+.immersive-player,
+dialog {
+  -webkit-app-region: no-drag;
+}
+
+/* While playing in a window the player covers that strip, so its top bar (title and status) moves the window instead;
+   its buttons and the settings sheet stay clickable. */
+.immersive-player.windowed .player-top {
+  -webkit-app-region: drag;
+}
+.immersive-player.windowed .player-top button,
+.immersive-player .player-settings {
+  -webkit-app-region: no-drag;
+}
+
+/* Scrollbars follow the theme (Chromium draws them light unless told otherwise). */
+html, body { color-scheme: dark; }
+body.light { color-scheme: light; 
