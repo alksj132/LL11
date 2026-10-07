@@ -1,5 +1,4 @@
-}
-}// The video and its subtitle layer move into the mini player window (another document) and back, so they are
+// The video and its subtitle layer move into the mini player window (another document) and back, so they are
 // looked up once and kept.
 const pinnedElements=new Map();
 const $ = s => { if(s==='#video'||s==='#videoStage'){if(!pinnedElements.has(s))pinnedElements.set(s,document.querySelector(s));return pinnedElements.get(s)} return document.querySelector(s); };

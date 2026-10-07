@@ -232,6 +232,56 @@
         ko: it.title || '',
         en: it.title_english || ''
       }));
+    // 5. Provider APIs (Standalone Mode Fallbacks via Jikan Anime APIs)
+    if (pathname === '/api/provider/season') {
+      try {
+        const res = await fetch('https://api.jikan.moe/v4/seasons/now?limit=25&sfw=true');
+        const root = await res.json();
+        return { data: root.data || [], label: '이번 시즌 추천' };
+      } catch { return { data: [], label: '이번 시즌 추천' }; }
+    }
+    if (pathname === '/api/provider/airing') {
+      try {
+        const res = await fetch('https://api.jikan.moe/v4/top/anime?filter=airing&limit=25&sfw=true');
+        const root = await res.json();
+        return { data: root.data || [], label: '방영 중' };
+      } catch { return { data: [], label: '방영 중' }; }
+    }
+    if (pathname === '/api/provider/catalog') {
+      try {
+        const res = await fetch('https://api.jikan.moe/v4/top/anime?filter=bypopularity&limit=30&sfw=true');
+        const root = await res.json();
+        return { data: root.data || [], total: (root.pagination || {}).items?.total || 100, done: true };
+      } catch { return { data: [], total: 0, done: true }; }
+    }
+    if (pathname === '/api/provider/detail') {
+      const body = JSON.parse(options.body || '{}');
+      const a = body.anime || {};
+      const id = a.id || a.mal_id;
+      let detail = a;
+      if (id && String(id).match(/^\d+$/)) {
+        try {
+          const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/full`);
+          const json = await res.json();
+          if (json.data) detail = json.data;
+        } catch {}
+      }
+      const epCount = Number(detail.episodes) || 12;
+      const episodes = [];
+      for (let i = 1; i <= epCount; i++) {
+        episodes.push({
+          name: String(i),
+          number: i,
+          title: `${detail.title || '애니'} ${i}화`,
+          provider: 'linkkf'
+        });
+      }
+      return { data: detail, episodes, unavailable: false };
+    }
+    if (pathname === '/api/provider/resolve') {
+      const body = JSON.parse(options.body || '{}');
+      const ep = body.episode || {};
+      return { url: ep.url || '', hls: false };
     }
 
     return { error: '미지원 또는 데이터 없음' };

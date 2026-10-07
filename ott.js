@@ -1,4 +1,3 @@
-}
 // OTT layout helpers: the header turns solid once the page scrolls (it sits clear over the home hero until then),
 // and each home row (but the ranked chart) gets previous / next buttons that page it sideways, shown only where there is more to see.
 (() => {

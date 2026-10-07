@@ -1,4 +1,3 @@
-}
 // Android PlayerScreen port: in-player settings menu, previous/next episode buttons, screen lock,
 // OP/ED auto skip, autoplay toggle and remote-style (TV) keyboard control. Loaded after app.js and
 // shares its globals ($, currentPlaybackContext, hlsPlayer, ...).
